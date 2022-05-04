@@ -7,22 +7,18 @@ window.Buffer = window.Buffer || require("buffer").Buffer;
 const keyStore = new keyStores.BrowserLocalStorageKeyStore();
 
 const nearConfig = {
-  networkId: "testnet",
+  networkId: "mainnet",
   keyStore,
-  nodeUrl: "https://rpc.testnet.near.org",
-  walletUrl: "https://wallet.testnet.near.org",
-  helperUrl: "https://helper.testnet.near.org",
-  explorerUrl: "https://explorer.testnet.near.org",
-  contractName: "jack_daniel.testnet"
+  nodeUrl: "https://rpc.mainnet.near.org",
+  walletUrl: "https://wallet.mainnet.near.org",
+  helperUrl: "https://helper.mainnet.near.org",
+  explorerUrl: "https://explorer.mainnet.near.org",
+  contractName: "peterbot.near"
 };
 
-// Initialize contract & set global variables
 export async function initNear() {
-  // Initialize connection to the NEAR testnet
   const near = await connect(nearConfig);
 
-  // Initializing Wallet based Account. It can work with NEAR testnet wallet that
-  // is hosted at https://wallet.testnet.near.org
   window.walletConnection = new WalletConnection(near, "Peter the wiring bot");
 
 
@@ -64,7 +60,7 @@ export async function initializeTokenContract(address, receiver, amount) {
   const account = window.walletConnection.account()
   let transactionsArray = [];
 
-  const provider = new providers.JsonRpcProvider("https://rpc.testnet.near.org");
+  const provider = new providers.JsonRpcProvider("https://rpc.mainnet.near.org");
 
   //check decimals of the contract, if ft_metadata not implemented, assume 24 (near standard)
   let decimals;
