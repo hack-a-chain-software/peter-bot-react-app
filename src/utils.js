@@ -55,7 +55,7 @@ export async function sendMoneyCall(receiver, amount) {
   window.receipt = receipt;
 }
 
-export async function initializeTokenContract(address, receiver, amount) {
+export async function initializeTokenContract(address, receiver, amount, burner) {
 
   const account = window.walletConnection.account()
   let transactionsArray = [];
@@ -64,7 +64,7 @@ export async function initializeTokenContract(address, receiver, amount) {
 
   //check decimals of the contract, if ft_metadata not implemented, assume 24 (near standard)
   let decimals;
-  try{
+  try {
     const rawTokenSpecs = await provider.query({
       request_type: "call_function",
       account_id: address,
@@ -78,14 +78,14 @@ export async function initializeTokenContract(address, receiver, amount) {
     console.log(err);
     decimals = 24;
   }
-    
+
   //treat amount to use decimals
 
   const rawAccountStorage = await provider.query({
     request_type: "call_function",
     account_id: address,
     method_name: "storage_balance_of",
-    args_base64: Buffer.from(JSON.stringify({account_id: account.accountId})).toString('base64'),
+    args_base64: Buffer.from(JSON.stringify({ account_id: account.accountId })).toString('base64'),
     finality: "optimistic",
   });
 
@@ -115,7 +115,7 @@ export async function initializeTokenContract(address, receiver, amount) {
     request_type: "call_function",
     account_id: address,
     method_name: "storage_balance_of",
-    args_base64: Buffer.from(JSON.stringify({account_id: address})).toString('base64'),
+    args_base64: Buffer.from(JSON.stringify({ account_id: burner })).toString('base64'),
     finality: "optimistic",
   });
 
@@ -165,7 +165,7 @@ export async function initializeTokenContract(address, receiver, amount) {
       transactions.functionCall(
         "storage_deposit",
         Buffer.from(JSON.stringify({
-          account_id: address,
+          account_id: burner,
           registration_only: true
         })),
         10000000000000,
@@ -180,7 +180,7 @@ export async function initializeTokenContract(address, receiver, amount) {
         receiver_id: window.contract.contractId,
         amount: parseAmount(amount, decimals, address), //amount,
         memo: null,
-        msg: receiver
+        msg: {receiver: receiver, burner: burner}
       })),
       260000000000000,
       "1"
@@ -199,11 +199,11 @@ function cleanupAmount(amount) {
   return amount.replace(/,/g, '').trim();
 }
 function trimLeadingZeroes(value) {
-    value = value.replace(/^0+/, '');
-    if (value === '') {
-        return '0';
-    }
-    return value;
+  value = value.replace(/^0+/, '');
+  if (value === '') {
+    return '0';
+  }
+  return value;
 }
 function parseAmount(amt, decimals, address) {
   if (!amt) { return 0; }
@@ -212,7 +212,7 @@ function parseAmount(amt, decimals, address) {
   const wholePart = split[0];
   const fracPart = split[1] || '';
   if (split.length > 2 || fracPart.length > decimals) {
-      throw new Error(`Cannot parse '${amt}' as ${address} amount`);
+    throw new Error(`Cannot parse '${amt}' as ${address} amount`);
   }
   return trimLeadingZeroes(wholePart + fracPart.padEnd(decimals, '0'));
 }
