@@ -22,14 +22,14 @@ export async function initNear() {
 
   window.walletConnection = new WalletConnection(near, "Peter the wiring bot");
 
-  if(!window.walletConnection.isSignedIn()) return window.walletConnection.requestSignIn()
-
   if (window.walletConnection.getAccountId().endsWith(".testnet")) {
     window.walletConnection.signOut();
   };
 
+  if(!window.walletConnection.isSignedIn()) return window.walletConnection.requestSignIn();
+
   // Getting the Account ID. If still unauthorized, it's just empty string
-  window.accountId = window.walletConnection.getAccountId()
+  window.accountId = window.walletConnection.getAccountId();
 
   // Initializing our contract APIs by contract name and configuration
 
