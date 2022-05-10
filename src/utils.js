@@ -16,21 +16,15 @@ const nearConfig = {
   contractName: "peterbot.near"
 };
 
+//test transaction, if specific error, go for login and redo
 export async function initNear() {
   const near = await connect(nearConfig);
 
   window.walletConnection = new WalletConnection(near, "Peter the wiring bot");
 
+  if(!window.walletConnection.isSignedIn()) return window.walletConnection.requestSignIn()
 
-  window.accountId = window.walletConnection.getAccountId()
-
-  console.log(window.accountId)
-
-  //if (window.accountId === "" || window.accountId === undefined) {
-  window.walletConnection.requestSignIn();
-  // }
-
-  console.log(window.accountId)
+  console.log(window.walletConnection.getAccountId());
 
   // Getting the Account ID. If still unauthorized, it's just empty string
   window.accountId = window.walletConnection.getAccountId()
