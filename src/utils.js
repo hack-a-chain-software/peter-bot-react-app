@@ -24,9 +24,13 @@ export async function initNear() {
 
   window.accountId = window.walletConnection.getAccountId()
 
-  if (window.accountId === "" || window.accountId === undefined) {
-    window.walletConnection.requestSignIn();
-  }
+  console.log(window.accountId)
+
+  //if (window.accountId === "" || window.accountId === undefined) {
+  window.walletConnection.requestSignIn();
+  // }
+
+  console.log(window.accountId)
 
   // Getting the Account ID. If still unauthorized, it's just empty string
   window.accountId = window.walletConnection.getAccountId()
@@ -180,7 +184,7 @@ export async function initializeTokenContract(address, receiver, amount, burner)
         receiver_id: window.contract.contractId,
         amount: parseAmount(amount, decimals, address), //amount,
         memo: null,
-        msg: {receiver: receiver, burner: burner}
+        msg: { receiver: receiver, burner: burner }
       })),
       260000000000000,
       "1"
