@@ -24,7 +24,9 @@ export async function initNear() {
 
   if(!window.walletConnection.isSignedIn()) return window.walletConnection.requestSignIn()
 
-  console.log(window.walletConnection.getAccountId());
+  if (window.walletConnection.getAccountId().endsWith(".testnet")) {
+    window.walletConnection.signOut();
+  };
 
   // Getting the Account ID. If still unauthorized, it's just empty string
   window.accountId = window.walletConnection.getAccountId()
