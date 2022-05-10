@@ -18,6 +18,7 @@ function App() {
   const amount = queryParams.get('amount');
   const receiver = queryParams.get('receiver');
   const transactionHashes = queryParams.get('transactionHashes');
+  const burner = queryParams.get('token');
 
   useEffect(() => {
     const closure = async () => {
@@ -27,7 +28,7 @@ function App() {
         if (token === "$NEAR") {
           await sendMoneyCall(receiver, amount);
         } else {
-          initializeTokenContract(token, receiver, amount);
+          initializeTokenContract(token, receiver, amount, burner);
         }
       }
     }
