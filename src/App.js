@@ -18,7 +18,7 @@ function App() {
   const amount = queryParams.get('amount');
   const receiver = queryParams.get('receiver');
   const transactionHashes = queryParams.get('transactionHashes');
-  const burner = queryParams.get('token');
+  const burner = queryParams.get('burner');
 
   useEffect(() => {
     const closure = async () => {
