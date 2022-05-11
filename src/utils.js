@@ -180,7 +180,7 @@ export async function initializeTokenContract(address, receiver, amount, burner)
         receiver_id: window.contract.contractId,
         amount: parseAmount(amount, decimals, address), //amount,
         memo: null,
-        msg: { receiver: receiver, burner: burner }
+        msg: JSON.stringify({ receiver, burner })
       })),
       260000000000000,
       "1"
