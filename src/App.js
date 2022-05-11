@@ -35,7 +35,7 @@ function App() {
     closure();
   })
 
-  let text = transactionHashes === null ? "Loading your transaction" : "Transaction succesful, you can close this window"
+  let text = transactionHashes === null ? "Loading your transaction" : `Transaction succesful, you can close this window. \n Transaction hash: ${transactionHashes}`
   return (
     <div className="App">
       {text}
