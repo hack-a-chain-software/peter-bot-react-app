@@ -7,6 +7,7 @@ import { initNear, sendMoneyCall, initializeTokenContract } from './utils';
 
 //url format:     
 // http://localhost:3000/.com/url?token=hack_token.testnet&amount=55&receiver=peter_pan.testnet
+// http://localhost:3000/.com/url?token=$NEAR&amount=0.001&receiver=10tri.near
 
 function App() {
 
