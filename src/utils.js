@@ -15,7 +15,7 @@ const nearConfig = {
   walletUrl: "https://wallet.mainnet.near.org",
   helperUrl: "https://helper.mainnet.near.org",
   explorerUrl: "https://explorer.mainnet.near.org",
-  contractName: "peterbot.near"
+  contractName: "tipping_bot.near"
 };
 
 // TEST NET CONFIG 
