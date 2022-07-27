@@ -1,4 +1,3 @@
-//  2 - USE THIS PARAMS AT SEND MONEY 
 
 import { useEffect } from "react";
 
@@ -7,8 +6,7 @@ import './App.css';
 import { initNear, sendMoneyCall, initializeTokenContract } from './utils';
 
 //url format:     
-// myURL = `http://localhost:3000/.com/url?token=${token}&ammount=${ammount}&receiver=${receiver}`
-// 
+// http://localhost:3000/.com/url?token=hack_token.testnet&amount=55&receiver=peter_pan.testnet
 
 function App() {
 

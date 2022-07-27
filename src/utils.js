@@ -1,11 +1,13 @@
-// Here we have our functions 
-// They will be used at App.js - almost like an API
-
 import { connect, keyStores, WalletConnection, utils, Contract, transactions, providers } from 'near-api-js';
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 const keyStore = new keyStores.BrowserLocalStorageKeyStore();
 
+
+
+
+//main net config 
+//TODO: CHANGE THE CONTRACT NAME 
 const nearConfig = {
   networkId: "mainnet",
   keyStore,
@@ -16,17 +18,31 @@ const nearConfig = {
   contractName: "peterbot.near"
 };
 
+// TEST NET CONFIG 
+// const nearConfig = {
+//   //networkId: "testnet",
+//   keyStore,
+//   nodeUrl: "https://rpc.Testnet.near.org",
+//   walletUrl: "https://wallet.Testnet.near.org",
+//   helperUrl: "https://helper.Testnet.near.org",
+//   explorerUrl: "https://explorer.Testnet.near.org",
+//   contractName: "bot_contract.testnet"
+// };
+
+
+
 //test transaction, if specific error, go for login and redo
 export async function initNear() {
   const near = await connect(nearConfig);
 
-  window.walletConnection = new WalletConnection(near, "Peter the wiring bot");
+  window.walletConnection = new WalletConnection(near, "The Supah tipping bot");
 
+  // MUST UNCOMMENT BEFOR MAINNET USE
   if (window.walletConnection.getAccountId().endsWith(".testnet")) {
     window.walletConnection.signOut();
   };
 
-  if(!window.walletConnection.isSignedIn()) return window.walletConnection.requestSignIn();
+  if (!window.walletConnection.isSignedIn()) return window.walletConnection.requestSignIn();
 
   // Getting the Account ID. If still unauthorized, it's just empty string
   window.accountId = window.walletConnection.getAccountId();
@@ -41,12 +57,11 @@ export async function initNear() {
   })
 }
 
-// window eh a var global do browser 
+
 export async function sendMoneyCall(receiver, amount) {
 
   amount = utils.format.parseNearAmount(amount);
 
-  //const receipt = await window.walletConnection.account().sendMoney(receiver, amount);
   const receipt = await window.contract.transfer_payment({
     args: { receiver: receiver },
     amount: amount
@@ -55,14 +70,19 @@ export async function sendMoneyCall(receiver, amount) {
   window.receipt = receipt;
 }
 
-export async function initializeTokenContract(address, receiver, amount, burner) {
+export async function initializeTokenContract(address, receiver, amount) {
 
   const account = window.walletConnection.account()
   let transactionsArray = [];
 
+  //MAIN NET RPC PROVIDER 
   const provider = new providers.JsonRpcProvider("https://rpc.mainnet.near.org");
 
+  //TEST NET RPC PROVIDER
+  //const provider = new providers.JsonRpcProvider("https://rpc.testnet.near.org");
+
   //check decimals of the contract, if ft_metadata not implemented, assume 24 (near standard)
+
   let decimals;
   try {
     const rawTokenSpecs = await provider.query({
@@ -111,16 +131,6 @@ export async function initializeTokenContract(address, receiver, amount, burner)
 
   let contractStorage = JSON.parse(Buffer.from(rawContractStorage.result).toString());
 
-  const rawBurnStorage = await provider.query({
-    request_type: "call_function",
-    account_id: address,
-    method_name: "storage_balance_of",
-    args_base64: Buffer.from(JSON.stringify({ account_id: burner })).toString('base64'),
-    finality: "optimistic",
-  });
-
-  let burnStorage = JSON.parse(Buffer.from(rawBurnStorage.result).toString());
-
   if (accountStorage == null) {
     transactionsArray.push(
       transactions.functionCall(
@@ -160,19 +170,7 @@ export async function initializeTokenContract(address, receiver, amount, burner)
       )
     )
   }
-  if (burnStorage == null) {
-    transactionsArray.push(
-      transactions.functionCall(
-        "storage_deposit",
-        Buffer.from(JSON.stringify({
-          account_id: burner,
-          registration_only: true
-        })),
-        10000000000000,
-        utils.format.parseNearAmount("0.01")
-      )
-    )
-  }
+
   transactionsArray.push(
     transactions.functionCall(
       "ft_transfer_call",
@@ -180,7 +178,7 @@ export async function initializeTokenContract(address, receiver, amount, burner)
         receiver_id: window.contract.contractId,
         amount: parseAmount(amount, decimals, address), //amount,
         memo: null,
-        msg: JSON.stringify({ receiver, burner })
+        msg: JSON.stringify({ receiver })
       })),
       260000000000000,
       "1"
